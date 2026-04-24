@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fba4e7a068ef4358ba6f1d0cedf72e2e, type: 3}
+  m_Name: SpawnerConfig
+  m_EditorClassIdentifier: 
+  <SpawnIntervalMin>k__BackingField: 2
+  <SpawnIntervalMax>k__BackingField: 5
+  <SpawnAreaSize>k__BackingField: {x: 14, y: 8}
+  <InitialSpawnCount>k__BackingField: 5
+  <MaxAliveAnimals>k__BackingField: 15
