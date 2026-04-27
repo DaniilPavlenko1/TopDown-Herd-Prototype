@@ -22,8 +22,12 @@ namespace Bootstrap
         [SerializeField] private HeroConfig heroConfig;
 
         [Header("Animals")]
-        [SerializeField] private AnimalController[] testAnimals;
+        [SerializeField] private AnimalController animalPrefab;
         [SerializeField] private AnimalConfig animalConfig;
+        [SerializeField] private Transform animalsContainer;
+
+        [Header("Spawner")]
+        [SerializeField] private SpawnerConfig spawnerConfig;
 
         [Header("Herd")]
         [SerializeField] private HerdConfig herdConfig;
@@ -42,6 +46,9 @@ namespace Bootstrap
         private IScoreService _scoreService;
         private DeliveryService _deliveryService;
 
+        private AnimalPool _animalPool;
+        private AnimalSpawner _animalSpawner;
+
         private void Awake()
         {
             _inputService = new MouseInputService(mainCamera);
@@ -53,24 +60,30 @@ namespace Bootstrap
                 _herdService,
                 _scoreService);
 
+            _animalPool = new AnimalPool(
+                animalPrefab,
+                animalsContainer);
+
+            _animalSpawner = new AnimalSpawner(
+                _animalPool,
+                animalConfig,
+                spawnerConfig,
+                spawnArea,
+                heroController.transform,
+                _herdService);
+
             heroController.Construct(heroConfig, _inputService);
             scoreView.Construct(_scoreService);
 
-            foreach (AnimalController animal in testAnimals)
-            {
-                animal.Construct(
-                    animalConfig,
-                    spawnArea,
-                    heroController.transform,
-                    _herdService);
-            }
-
             yardZone.AnimalEntered += OnAnimalEnteredYard;
+
+            _animalSpawner.SpawnInitial();
         }
 
         private void Update()
         {
             _inputService.Tick();
+            _animalSpawner.Tick(Time.deltaTime);
         }
 
         private void OnDestroy()

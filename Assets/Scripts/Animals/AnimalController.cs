@@ -11,6 +11,7 @@ namespace Animals
         private AnimalConfig _config;
         private AnimalMover _mover;
         private AnimalStateMachine _stateMachine;
+        private AnimalPool _pool;
 
         private Transform _heroTransform;
         private IHerdService _herdService;
@@ -20,12 +21,14 @@ namespace Animals
             AnimalConfig config,
             AdaptiveSpawnArea spawnArea,
             Transform heroTransform,
-            IHerdService herdService)
+            IHerdService herdService,
+            AnimalPool pool)
         {
             _config = config;
             _spawnArea = spawnArea;
             _heroTransform = heroTransform;
             _herdService = herdService;
+            _pool = pool;
 
             _mover = new AnimalMover(transform, _config.MoveSpeed);
             _stateMachine = new AnimalStateMachine();
@@ -43,8 +46,7 @@ namespace Animals
 
         public void Deliver()
         {
-            var deliveredState = new DeliveredAnimalState(gameObject);
-            _stateMachine.ChangeState(deliveredState);
+            _pool.Release(this);
         }
 
         private void SwitchToPatrol()
