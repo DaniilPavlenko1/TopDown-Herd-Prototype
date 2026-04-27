@@ -391,6 +391,8 @@ MonoBehaviour:
   animalConfig: {fileID: 11400000, guid: d5d12bfb8beb8fa41be86ca7144c0bb7, type: 2}
   herdConfig: {fileID: 11400000, guid: 0adf21decdf9d764e9f27edf13212ba2, type: 2}
   spawnArea: {fileID: 1990631904}
+  yardZone: {fileID: 1877047140}
+  scoreView: {fileID: 802165369}
 --- !u!1 &484942748
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,6 +594,7 @@ GameObject:
   - component: {fileID: 802165366}
   - component: {fileID: 802165368}
   - component: {fileID: 802165367}
+  - component: {fileID: 802165369}
   m_Layer: 5
   m_Name: ScoreText
   m_TagString: Untagged
@@ -717,6 +720,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 802165365}
   m_CullTransparentMesh: 1
+--- !u!114 &802165369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802165365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ad4488cfc5467a8aab84b75de965f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scoreText: {fileID: 802165367}
 --- !u!1001 &816365236
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1218,6 +1234,7 @@ GameObject:
   - component: {fileID: 1877047138}
   - component: {fileID: 1877047137}
   - component: {fileID: 1877047139}
+  - component: {fileID: 1877047140}
   m_Layer: 0
   m_Name: YardZone
   m_TagString: Untagged
@@ -1357,6 +1374,18 @@ MonoBehaviour:
   widthPercent: 0.18
   heightPercent: 0.45
   rightPadding: 1
+--- !u!114 &1877047140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1877047135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4893340787334c85a4cc194d236718e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1896199670
 PrefabInstance:
   m_ObjectHideFlags: 0

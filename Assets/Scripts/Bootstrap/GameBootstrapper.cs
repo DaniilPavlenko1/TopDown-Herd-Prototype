@@ -1,10 +1,14 @@
 using Animals;
 using Configs;
+using Delivery;
 using Herd;
 using Hero;
 using Input;
+using Score;
+using UI;
 using UnityEngine;
 using World;
+using Yard;
 
 namespace Bootstrap
 {
@@ -27,15 +31,30 @@ namespace Bootstrap
         [Header("World")]
         [SerializeField] private AdaptiveSpawnArea spawnArea;
 
+        [Header("Delivery")]
+        [SerializeField] private YardZone yardZone;
+
+        [Header("UI")]
+        [SerializeField] private ScoreView scoreView;
+
         private MouseInputService _inputService;
         private IHerdService _herdService;
+        private IScoreService _scoreService;
+        private DeliveryService _deliveryService;
 
         private void Awake()
         {
             _inputService = new MouseInputService(mainCamera);
+
             _herdService = new HerdService(herdConfig);
+            _scoreService = new ScoreService();
+
+            _deliveryService = new DeliveryService(
+                _herdService,
+                _scoreService);
 
             heroController.Construct(heroConfig, _inputService);
+            scoreView.Construct(_scoreService);
 
             foreach (AnimalController animal in testAnimals)
             {
@@ -45,11 +64,24 @@ namespace Bootstrap
                     heroController.transform,
                     _herdService);
             }
+
+            yardZone.AnimalEntered += OnAnimalEnteredYard;
         }
 
         private void Update()
         {
             _inputService.Tick();
+        }
+
+        private void OnDestroy()
+        {
+            if (yardZone != null)
+                yardZone.AnimalEntered -= OnAnimalEnteredYard;
+        }
+
+        private void OnAnimalEnteredYard(AnimalController animal)
+        {
+            _deliveryService.DeliverAnimal(animal);
         }
     }
 }

@@ -41,6 +41,12 @@ namespace Animals
             }
         }
 
+        public void Deliver()
+        {
+            var deliveredState = new DeliveredAnimalState(gameObject);
+            _stateMachine.ChangeState(deliveredState);
+        }
+
         private void SwitchToPatrol()
         {
             var patrolState = new PatrolAnimalState(
