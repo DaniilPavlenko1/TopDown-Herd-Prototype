@@ -1155,6 +1155,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animalConfig: {fileID: 11400000, guid: d5d12bfb8beb8fa41be86ca7144c0bb7, type: 2}
+  animalLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &1990631901
 GameObject:
   m_ObjectHideFlags: 0

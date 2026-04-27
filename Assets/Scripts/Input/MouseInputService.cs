@@ -16,13 +16,12 @@ namespace Input
 
         public void Tick()
         {
-            if (UnityEngine.Input.GetMouseButtonDown(0))
-            {
-                Vector3 worldPos = _camera.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-                worldPos.z = 0f;
+            if (!UnityEngine.Input.GetMouseButtonDown(0)) return;
+            
+            var worldPos = _camera.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+            worldPos.z = 0f;
 
-                OnMoveCommand?.Invoke(worldPos);
-            }
+            OnMoveCommand?.Invoke(worldPos);
         }
     }
 }

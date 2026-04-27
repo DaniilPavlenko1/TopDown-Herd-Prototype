@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d913775b83724b94b0790dda9bdce8b1, type: 3}
   m_Name: AnimalConfig
   m_EditorClassIdentifier: 
-  <MoveSpeed>k__BackingField: 3
+  <MoveSpeed>k__BackingField: 5
   <FollowDistance>k__BackingField: 0.7
   <CollectRadius>k__BackingField: 1.2
   <PatrolRadius>k__BackingField: 3

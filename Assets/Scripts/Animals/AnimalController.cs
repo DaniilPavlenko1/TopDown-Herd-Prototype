@@ -16,6 +16,8 @@ namespace Animals
         private Transform _heroTransform;
         private IHerdService _herdService;
         private AdaptiveSpawnArea _spawnArea;
+        
+        public event System.Action<AnimalController> OnReleased;
 
         public void Construct(
             AnimalConfig config,
@@ -47,6 +49,8 @@ namespace Animals
         public void Deliver()
         {
             _pool.Release(this);
+
+            OnReleased?.Invoke(this);
         }
 
         private void SwitchToPatrol()

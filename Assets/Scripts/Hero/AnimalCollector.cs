@@ -7,16 +7,23 @@ namespace Hero
     public class AnimalCollector : MonoBehaviour
     {
         [SerializeField] private AnimalConfig animalConfig;
+        [SerializeField] private LayerMask animalLayerMask;
+
+        private readonly Collider2D[] _results = new Collider2D[16];
 
         private void Update()
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(
+#pragma warning disable CS0618
+            int count = Physics2D.OverlapCircleNonAlloc(
                 transform.position,
-                animalConfig.CollectRadius);
+                animalConfig.CollectRadius,
+                _results,
+                animalLayerMask);
+#pragma warning restore CS0618
 
-            foreach (Collider2D hit in hits)
+            for (int i = 0; i < count; i++)
             {
-                if (hit.TryGetComponent(out AnimalController animal))
+                if (_results[i].TryGetComponent(out AnimalController animal))
                 {
                     animal.TryCollect();
                 }

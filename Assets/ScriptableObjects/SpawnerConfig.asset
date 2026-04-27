@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SpawnerConfig
   m_EditorClassIdentifier: 
   <SpawnIntervalMin>k__BackingField: 2
-  <SpawnIntervalMax>k__BackingField: 5
+  <SpawnIntervalMax>k__BackingField: 3
   <SpawnAreaSize>k__BackingField: {x: 14, y: 8}
   <InitialSpawnCount>k__BackingField: 5
   <MaxAliveAnimals>k__BackingField: 15

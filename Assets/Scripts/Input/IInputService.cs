@@ -1,9 +1,12 @@
 using System;
+using UnityEngine;
 
 namespace Input
 {
     public interface IInputService
     {
-        event Action<UnityEngine.Vector3> OnMoveCommand;
+        event Action<Vector3> OnMoveCommand;
+
+        void Tick();
     }
 }

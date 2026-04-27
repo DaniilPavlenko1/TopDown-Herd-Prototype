@@ -4,8 +4,8 @@ namespace Hero
 {
     public class HeroMover
     {
-        private Transform _transform;
-        private float _speed;
+        private readonly Transform _transform;
+        private readonly float _speed;
 
         private Vector3 _target;
         private bool _hasTarget;
@@ -26,17 +26,13 @@ namespace Hero
         {
             if (!_hasTarget) return;
 
-            Vector3 direction = (_target - _transform.position);
-            float distance = direction.magnitude;
+            _transform.position = Vector3.MoveTowards(
+                _transform.position,
+                _target,
+                _speed * deltaTime);
 
-            if (distance < 0.05f)
-            {
+            if (Vector3.Distance(_transform.position, _target) <= 0.01f)
                 _hasTarget = false;
-                return;
-            }
-
-            direction.Normalize();
-            _transform.position += direction * _speed * deltaTime;
         }
     }
 }

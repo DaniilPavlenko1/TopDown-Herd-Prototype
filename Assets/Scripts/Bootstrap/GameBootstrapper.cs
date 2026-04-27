@@ -41,7 +41,7 @@ namespace Bootstrap
         [Header("UI")]
         [SerializeField] private ScoreView scoreView;
 
-        private MouseInputService _inputService;
+        private IInputService _inputService;
         private IHerdService _herdService;
         private IScoreService _scoreService;
         private DeliveryService _deliveryService;
@@ -51,6 +51,8 @@ namespace Bootstrap
 
         private void Awake()
         {
+            ValidateReferences();
+            
             _inputService = new MouseInputService(mainCamera);
 
             _herdService = new HerdService(herdConfig);
@@ -95,6 +97,21 @@ namespace Bootstrap
         private void OnAnimalEnteredYard(AnimalController animal)
         {
             _deliveryService.DeliverAnimal(animal);
+        }
+        
+        private void ValidateReferences()
+        {
+            Debug.Assert(mainCamera != null, "Main Camera is not assigned.");
+            Debug.Assert(heroController != null, "HeroController is not assigned.");
+            Debug.Assert(heroConfig != null, "HeroConfig is not assigned.");
+            Debug.Assert(animalPrefab != null, "Animal prefab is not assigned.");
+            Debug.Assert(animalConfig != null, "AnimalConfig is not assigned.");
+            Debug.Assert(animalsContainer != null, "Animals container is not assigned.");
+            Debug.Assert(spawnerConfig != null, "SpawnerConfig is not assigned.");
+            Debug.Assert(herdConfig != null, "HerdConfig is not assigned.");
+            Debug.Assert(spawnArea != null, "SpawnArea is not assigned.");
+            Debug.Assert(yardZone != null, "YardZone is not assigned.");
+            Debug.Assert(scoreView != null, "ScoreView is not assigned.");
         }
     }
 }

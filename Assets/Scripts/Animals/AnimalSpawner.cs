@@ -15,6 +15,7 @@ namespace Animals
         private readonly IHerdService _herdService;
 
         private float _timer;
+        private int _aliveCount;
 
         public AnimalSpawner(
             AnimalPool pool,
@@ -53,15 +54,30 @@ namespace Animals
 
         private void Spawn()
         {
+            if (_aliveCount >= _spawnerConfig.MaxAliveAnimals)
+                return;
+
             AnimalController animal = _pool.Get();
+            
+            animal.OnReleased -= OnAnimalReleased;
+            animal.OnReleased += OnAnimalReleased;
 
             animal.transform.position = GetRandomPoint();
+
             animal.Construct(
                 _animalConfig,
                 _spawnArea,
                 _heroTransform,
                 _herdService,
                 _pool);
+
+            _aliveCount++;
+        }
+        
+        private void OnAnimalReleased(AnimalController animal)
+        {
+            _aliveCount = Mathf.Max(0, _aliveCount - 1);
+            animal.OnReleased -= OnAnimalReleased;
         }
 
         private Vector3 GetRandomPoint()

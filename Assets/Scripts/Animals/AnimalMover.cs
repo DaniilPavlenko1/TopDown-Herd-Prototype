@@ -15,13 +15,12 @@ namespace Animals
 
         public void MoveTo(Vector3 target, float deltaTime)
         {
-            Vector3 direction = target - _transform.position;
-            direction.z = 0f;
+            target.z = 0f;
 
-            if (direction.sqrMagnitude <= 0.001f)
-                return;
-
-            _transform.position += direction.normalized * _speed * deltaTime;
+            _transform.position = Vector3.MoveTowards(
+                _transform.position,
+                target,
+                _speed * deltaTime);
         }
     }
 }
