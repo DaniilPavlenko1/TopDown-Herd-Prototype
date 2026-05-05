@@ -1,5 +1,5 @@
 using Application.Animals;
-using Domain.Animals;
+using Application.Input;
 using Domain.Animals.States;
 using Domain.Hero;
 using Domain.Movement;
@@ -8,6 +8,7 @@ namespace Application.Gameplay
 {
     public sealed class GameplayUpdateService
     {
+        private readonly IPlayerInput _input;
         private readonly HeroModel _hero;
         private readonly HeroMovementService _heroMovementService;
         private readonly AnimalSpawnService _spawnService;
@@ -16,6 +17,7 @@ namespace Application.Gameplay
         private readonly IAnimalState _followState;
 
         public GameplayUpdateService(
+            IPlayerInput input,
             HeroModel hero,
             HeroMovementService heroMovementService,
             AnimalSpawnService spawnService,
@@ -23,6 +25,7 @@ namespace Application.Gameplay
             AnimalDeliveryService deliveryService,
             IAnimalState followState)
         {
+            _input = input;
             _hero = hero;
             _heroMovementService = heroMovementService;
             _spawnService = spawnService;
@@ -33,6 +36,8 @@ namespace Application.Gameplay
 
         public void Tick(float deltaTime)
         {
+            _input.Tick();
+
             _heroMovementService.Tick(_hero, deltaTime);
 
             for (int i = 0; i < _spawnService.Animals.Count; i++)
