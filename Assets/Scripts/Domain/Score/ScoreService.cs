@@ -2,7 +2,7 @@ using System;
 
 namespace Domain.Score
 {
-    public sealed class ScoreModel
+    public sealed class ScoreService : IScoreService
     {
         public event Action<int> Changed;
 

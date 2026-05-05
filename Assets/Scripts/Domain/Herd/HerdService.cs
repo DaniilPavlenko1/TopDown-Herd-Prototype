@@ -3,7 +3,7 @@ using Domain.Animals;
 
 namespace Domain.Herd
 {
-    public sealed class HerdModel
+    public sealed class HerdService : IHerdService
     {
         private readonly HerdSettings _settings;
         private readonly List<AnimalModel> _animals = new();
@@ -12,7 +12,7 @@ namespace Domain.Herd
         public bool IsFull => _animals.Count >= _settings.MaxAnimals;
         public IReadOnlyList<AnimalModel> Animals => _animals;
 
-        public HerdModel(HerdSettings settings)
+        public HerdService(HerdSettings settings)
         {
             _settings = settings;
         }
