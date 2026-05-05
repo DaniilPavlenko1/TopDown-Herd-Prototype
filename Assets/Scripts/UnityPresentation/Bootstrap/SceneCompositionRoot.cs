@@ -11,6 +11,7 @@ using Domain.Movement;
 using Domain.Score;
 using UnityEngine;
 using UnityPresentation.Bindings;
+using UnityPresentation.Diagnostics;
 using UnityPresentation.Input;
 using UnityPresentation.Pooling;
 using UnityPresentation.World;
@@ -92,6 +93,7 @@ namespace UnityPresentation.Bootstrap
 
             var layoutService = new WorldLayoutService();
             WorldLayout layout = layoutService.Calculate(layoutSettings);
+            sceneReferences.GameplayGizmos?.SetLayout(layout);
 
             _gameplayWorld = new GameplayWorld(
                 layout.WorldBounds,
@@ -199,11 +201,13 @@ namespace UnityPresentation.Bootstrap
 
         private void ValidateReferences()
         {
-            Debug.Assert(sceneReferences != null, "SceneReferences is not assigned.");
-            Debug.Assert(heroConfig != null, "HeroConfig is not assigned.");
-            Debug.Assert(animalConfig != null, "AnimalConfig is not assigned.");
-            Debug.Assert(herdConfig != null, "HerdConfig is not assigned.");
-            Debug.Assert(spawnerConfig != null, "SpawnerConfig is not assigned.");
+            SceneReferenceValidator.Validate(sceneReferences);
+
+            ConfigValidator.Validate(
+                heroConfig,
+                animalConfig,
+                herdConfig,
+                spawnerConfig);
         }
     }
 }

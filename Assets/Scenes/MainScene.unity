@@ -850,6 +850,7 @@ GameObject:
   - component: {fileID: 1468881517}
   - component: {fileID: 1468881519}
   - component: {fileID: 1468881518}
+  - component: {fileID: 1468881520}
   m_Layer: 0
   m_Name: SceneCompositionRoot
   m_TagString: Untagged
@@ -893,6 +894,7 @@ MonoBehaviour:
   animalPrefab: {fileID: 4258119550874848216, guid: 2cf971e3580a1e04fb068f47a7ade3cb, type: 3}
   animalsContainer: {fileID: 139590939}
   scoreView: {fileID: 802165369}
+  gameplayGizmos: {fileID: 1468881520}
 --- !u!114 &1468881519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,6 +918,18 @@ MonoBehaviour:
   horizontalPadding: 1
   verticalPadding: 1
   gapBetweenSpawnAndYard: 1
+--- !u!114 &1468881520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468881516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc3393613a5184489332cde1431a08a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1514520956
 GameObject:
   m_ObjectHideFlags: 0

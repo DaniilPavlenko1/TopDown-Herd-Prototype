@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityPresentation.Diagnostics;
 using UnityPresentation.UI;
 using UnityPresentation.Views;
 using UnityPresentation.World;
@@ -26,6 +27,9 @@ namespace UnityPresentation.Bootstrap
         [Header("UI")]
         [SerializeField] private ScoreView scoreView;
 
+        [Header("Diagnostics")]
+        [SerializeField] private GameplayGizmos gameplayGizmos;
+
         public Camera MainCamera => mainCamera;
         public CameraView CameraView => cameraView;
         public GroundView GroundView => groundView;
@@ -35,5 +39,6 @@ namespace UnityPresentation.Bootstrap
         public AnimalView AnimalPrefab => animalPrefab;
         public Transform AnimalsContainer => animalsContainer;
         public ScoreView ScoreView => scoreView;
+        public GameplayGizmos GameplayGizmos => gameplayGizmos;
     }
 }
