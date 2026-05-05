@@ -8,7 +8,7 @@ namespace Application.Animals
     public sealed class AnimalSpawnTimerService : ITickable, IInitializable
     {
         private readonly AnimalSpawnService _spawnService;
-        private readonly IAnimalState _patrolState;
+        private readonly IAnimalStateFactory _stateFactory;
         private readonly int _initialSpawnCount;
         private readonly int _maxAliveAnimals;
         private readonly float _spawnIntervalMin;
@@ -19,14 +19,14 @@ namespace Application.Animals
 
         public AnimalSpawnTimerService(
             AnimalSpawnService spawnService,
-            IAnimalState patrolState,
+            IAnimalStateFactory stateFactory,
             int initialSpawnCount,
             int maxAliveAnimals,
             float spawnIntervalMin,
             float spawnIntervalMax)
         {
             _spawnService = spawnService;
-            _patrolState = patrolState;
+            _stateFactory = stateFactory;
             _initialSpawnCount = initialSpawnCount;
             _maxAliveAnimals = maxAliveAnimals;
             _spawnIntervalMin = spawnIntervalMin;
@@ -57,7 +57,7 @@ namespace Application.Animals
         private void SpawnAnimal()
         {
             AnimalModel animal = _spawnService.Spawn();
-            animal.SetState(_patrolState);
+            animal.SetState(_stateFactory.CreatePatrolState());
         }
 
         private void ResetTimer()

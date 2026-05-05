@@ -1,7 +1,6 @@
 using Application.Animals;
 using Application.Common;
 using Application.Input;
-using Domain.Animals.States;
 using Domain.Hero;
 using Domain.Movement;
 
@@ -15,7 +14,6 @@ namespace Application.Gameplay
         private readonly AnimalSpawnService _spawnService;
         private readonly AnimalCollectionService _collectionService;
         private readonly AnimalDeliveryService _deliveryService;
-        private readonly IAnimalState _followState;
 
         public GameplayUpdateService(
             IPlayerInput input,
@@ -23,8 +21,7 @@ namespace Application.Gameplay
             HeroMovementService heroMovementService,
             AnimalSpawnService spawnService,
             AnimalCollectionService collectionService,
-            AnimalDeliveryService deliveryService,
-            IAnimalState followState)
+            AnimalDeliveryService deliveryService)
         {
             _input = input;
             _hero = hero;
@@ -32,7 +29,6 @@ namespace Application.Gameplay
             _spawnService = spawnService;
             _collectionService = collectionService;
             _deliveryService = deliveryService;
-            _followState = followState;
         }
 
         public void Tick(float deltaTime)
@@ -46,8 +42,7 @@ namespace Application.Gameplay
 
             _collectionService.TryCollectNearbyAnimals(
                 _hero.Position,
-                _spawnService.Animals,
-                _followState);
+                _spawnService.Animals);
 
             _deliveryService.TryDeliverAnimals();
         }

@@ -4,7 +4,6 @@ using Application.Input;
 using Application.World;
 using Configs;
 using Domain.Animals;
-using Domain.Animals.States;
 using Domain.Common;
 using Domain.Herd;
 using Domain.Hero;
@@ -130,22 +129,18 @@ namespace UnityPresentation.Bootstrap
 
             _animalSpawnService = new AnimalSpawnService(_gameplayWorld);
 
-            var patrolState = new PatrolAnimalState(
+            var stateFactory = new AnimalStateFactory(
                 animalMovementService,
                 ConfigMapper.ToAnimalMovementSettings(animalConfig),
-                _gameplayWorld.SpawnBounds,
-                animalSettings.PatrolPointReachDistance);
-
-            var followState = new FollowHerdAnimalState(
-                animalMovementService,
-                ConfigMapper.ToAnimalMovementSettings(animalConfig),
+                _gameplayWorld,
                 herdService,
                 () => hero.Position,
-                animalSettings.FollowDistance);
+                animalSettings);
 
             var collectionService = new AnimalCollectionService(
                 herdService,
-                animalSettings);
+                animalSettings,
+                stateFactory);
 
             _animalDeliveryService = new AnimalDeliveryService(
                 herdService,
@@ -158,8 +153,7 @@ namespace UnityPresentation.Bootstrap
                 heroMovementService,
                 _animalSpawnService,
                 collectionService,
-                _animalDeliveryService,
-                followState);
+                _animalDeliveryService);
 
             var animalViewPool = new AnimalViewPool(
                 sceneReferences.AnimalPrefab,
@@ -169,7 +163,7 @@ namespace UnityPresentation.Bootstrap
             _heroViewBinder = new HeroViewBinder(hero, sceneReferences.HeroView);
             var spawnTimerService = new AnimalSpawnTimerService(
                 _animalSpawnService,
-                patrolState,
+                stateFactory,
                 spawnerConfig.InitialSpawnCount,
                 spawnerConfig.MaxAliveAnimals,
                 spawnerConfig.SpawnIntervalMin,

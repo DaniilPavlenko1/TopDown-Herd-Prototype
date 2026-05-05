@@ -10,19 +10,21 @@ namespace Application.Animals
     {
         private readonly IHerdService _herdService;
         private readonly AnimalSettings _settings;
+        private readonly IAnimalStateFactory _stateFactory;
 
         public AnimalCollectionService(
             IHerdService herdService,
-            AnimalSettings settings)
+            AnimalSettings settings,
+            IAnimalStateFactory stateFactory)
         {
             _herdService = herdService;
             _settings = settings;
+            _stateFactory = stateFactory;
         }
 
         public void TryCollectNearbyAnimals(
             GameVector2 heroPosition,
-            IReadOnlyList<AnimalModel> animals,
-            IAnimalState followState)
+            IReadOnlyList<AnimalModel> animals)
         {
             if (_herdService.IsFull)
                 return;
@@ -40,9 +42,7 @@ namespace Application.Animals
                     continue;
 
                 if (_herdService.TryAdd(animal))
-                {
-                    animal.SetState(followState);
-                }
+                    animal.SetState(_stateFactory.CreateFollowState());
 
                 if (_herdService.IsFull)
                     return;
