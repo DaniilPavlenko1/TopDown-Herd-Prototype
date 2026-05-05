@@ -25,6 +25,11 @@ namespace Domain.Hero
             Position = position;
         }
 
+        public bool IsMoving()
+        {
+            return HasTarget && !Position.Equals(TargetPosition);
+        }
+
         public void ClearTarget()
         {
             HasTarget = false;
