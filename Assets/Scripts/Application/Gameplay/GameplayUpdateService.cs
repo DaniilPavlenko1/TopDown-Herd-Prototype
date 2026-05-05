@@ -1,4 +1,5 @@
 using Application.Animals;
+using Application.Common;
 using Application.Input;
 using Domain.Animals.States;
 using Domain.Hero;
@@ -6,7 +7,7 @@ using Domain.Movement;
 
 namespace Application.Gameplay
 {
-    public sealed class GameplayUpdateService
+    public sealed class GameplayUpdateService : ITickable
     {
         private readonly IPlayerInput _input;
         private readonly HeroModel _hero;
@@ -41,9 +42,7 @@ namespace Application.Gameplay
             _heroMovementService.Tick(_hero, deltaTime);
 
             for (int i = 0; i < _spawnService.Animals.Count; i++)
-            {
                 _spawnService.Animals[i].Tick(deltaTime);
-            }
 
             _collectionService.TryCollectNearbyAnimals(
                 _hero.Position,

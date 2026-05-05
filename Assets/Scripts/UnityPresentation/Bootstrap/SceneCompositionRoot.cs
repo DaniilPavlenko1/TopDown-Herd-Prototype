@@ -37,6 +37,7 @@ namespace UnityPresentation.Bootstrap
         [SerializeField] private float verticalPadding = 1f;
         [SerializeField] private float gapBetweenSpawnAndYard = 1f;
 
+        private GameplayLifetime _lifetime;
         private GameplayUpdateService _gameplayUpdateService;
         private HeroInputService _heroInputService;
 
@@ -46,31 +47,28 @@ namespace UnityPresentation.Bootstrap
         private AnimalSpawnService _animalSpawnService;
         private AnimalDeliveryService _animalDeliveryService;
 
-        private float _spawnTimer;
-
         private GameplayWorld _gameplayWorld;
 
         private void Awake()
         {
             ValidateReferences();
 
+            _lifetime = new GameplayLifetime();
+
             BuildWorld();
             BuildGameplay();
+
+            _lifetime.Initialize();
         }
 
         private void Update()
         {
-            _gameplayUpdateService.Tick(Time.deltaTime);
-
-            UpdateSpawning(Time.deltaTime);
-
-            _heroViewBinder.Tick();
-            _animalViewRegistry.Tick();
+            _lifetime.Tick(Time.deltaTime);
         }
 
         private void OnDestroy()
         {
-            _heroInputService?.Dispose();
+            _lifetime?.Dispose();
 
             if (_animalSpawnService != null)
                 _animalSpawnService.Spawned -= OnAnimalSpawned;
@@ -169,56 +167,29 @@ namespace UnityPresentation.Bootstrap
 
             _animalViewRegistry = new AnimalViewRegistry(animalViewPool);
             _heroViewBinder = new HeroViewBinder(hero, sceneReferences.HeroView);
+            var spawnTimerService = new AnimalSpawnTimerService(
+                _animalSpawnService,
+                patrolState,
+                spawnerConfig.InitialSpawnCount,
+                spawnerConfig.MaxAliveAnimals,
+                spawnerConfig.SpawnIntervalMin,
+                spawnerConfig.SpawnIntervalMax);
+            var viewTickService = new ViewTickService(
+                _heroViewBinder,
+                _animalViewRegistry);
 
             sceneReferences.ScoreView.Bind(scoreService);
 
             _animalSpawnService.Spawned += OnAnimalSpawned;
             _animalDeliveryService.Delivered += OnAnimalDelivered;
 
-            SpawnInitialAnimals(patrolState);
-            ResetSpawnTimer();
-        }
+            _lifetime.AddInitializable(spawnTimerService);
+            _lifetime.AddTickable(_gameplayUpdateService);
+            _lifetime.AddTickable(spawnTimerService);
+            _lifetime.AddTickable(viewTickService);
 
-        private void SpawnInitialAnimals(IAnimalState patrolState)
-        {
-            for (int i = 0; i < spawnerConfig.InitialSpawnCount; i++)
-            {
-                AnimalModel animal = _animalSpawnService.Spawn();
-                animal.SetState(patrolState);
-            }
-        }
-
-        private void UpdateSpawning(float deltaTime)
-        {
-            _spawnTimer -= deltaTime;
-
-            if (_spawnTimer > 0f)
-                return;
-
-            if (_animalSpawnService.Animals.Count < spawnerConfig.MaxAliveAnimals)
-            {
-                AnimalModel animal = _animalSpawnService.Spawn();
-
-                var movementService = new MovementService();
-                var animalMovementService = new AnimalMovementService(movementService);
-
-                var patrolState = new PatrolAnimalState(
-                    animalMovementService,
-                    ConfigMapper.ToAnimalMovementSettings(animalConfig),
-                    _gameplayWorld.SpawnBounds,
-                    animalConfig.PatrolPointReachDistance);
-
-                animal.SetState(patrolState);
-            }
-
-            ResetSpawnTimer();
-        }
-
-        private void ResetSpawnTimer()
-        {
-            _spawnTimer = Random.Range(
-                spawnerConfig.SpawnIntervalMin,
-                spawnerConfig.SpawnIntervalMax);
+            _lifetime.AddDisposable(_heroInputService);
+            _lifetime.AddDisposable(viewTickService);
         }
 
         private void OnAnimalSpawned(AnimalModel animal)

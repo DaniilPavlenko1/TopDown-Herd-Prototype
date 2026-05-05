@@ -283,7 +283,7 @@ MonoBehaviour:
   herdConfig: {fileID: 11400000, guid: 0adf21decdf9d764e9f27edf13212ba2, type: 2}
   spawnArea: {fileID: 1990631904}
   yardZone: {fileID: 1877047140}
-  scoreView: {fileID: 802165369}
+  scoreView: {fileID: 0}
 --- !u!1 &484942748
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,7 +499,6 @@ GameObject:
   - component: {fileID: 802165368}
   - component: {fileID: 802165367}
   - component: {fileID: 802165369}
-  - component: {fileID: 802165370}
   m_Layer: 5
   m_Name: ScoreText
   m_TagString: Untagged
@@ -632,25 +631,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 802165365}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8ad4488cfc5467a8aab84b75de965f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scoreText: {fileID: 802165367}
---- !u!114 &802165370
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 802165365}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f506cbcba13c6c244a776a1c331d82e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreText: {fileID: 0}
+  scoreText: {fileID: 802165367}
 --- !u!1 &1102259285
 GameObject:
   m_ObjectHideFlags: 0
@@ -906,7 +892,7 @@ MonoBehaviour:
   heroView: {fileID: 1973930383}
   animalPrefab: {fileID: 4258119550874848216, guid: 2cf971e3580a1e04fb068f47a7ade3cb, type: 3}
   animalsContainer: {fileID: 139590939}
-  scoreView: {fileID: 802165370}
+  scoreView: {fileID: 802165369}
 --- !u!114 &1468881519
 MonoBehaviour:
   m_ObjectHideFlags: 0

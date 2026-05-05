@@ -1,8 +1,10 @@
+using Application.Common;
+using Domain.Common;
 using Domain.Hero;
 
 namespace Application.Input
 {
-    public sealed class HeroInputService
+    public sealed class HeroInputService : IDisposableService
     {
         private readonly HeroModel _hero;
         private readonly IPlayerInput _input;
@@ -22,7 +24,7 @@ namespace Application.Input
             _input.MoveCommand -= OnMoveCommand;
         }
 
-        private void OnMoveCommand(Domain.Common.GameVector2 position)
+        private void OnMoveCommand(GameVector2 position)
         {
             _hero.SetTarget(position);
         }
