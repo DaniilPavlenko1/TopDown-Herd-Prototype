@@ -1,3 +1,4 @@
+using System;
 using Configs;
 using UnityEngine;
 
@@ -51,6 +52,54 @@ namespace UnityPresentation.Diagnostics
             Debug.Assert(
                 spawnerConfig.InitialSpawnCount <= spawnerConfig.MaxAliveAnimals,
                 "SpawnerConfig: InitialSpawnCount must be <= MaxAliveAnimals.");
+        }
+
+        public static void ThrowIfInvalid(
+            HeroConfig heroConfig,
+            AnimalConfig animalConfig,
+            HerdConfig herdConfig,
+            SpawnerConfig spawnerConfig)
+        {
+            Validate(heroConfig, animalConfig, herdConfig, spawnerConfig);
+
+            if (heroConfig == null)
+                throw new InvalidOperationException("HeroConfig is not assigned.");
+
+            if (animalConfig == null)
+                throw new InvalidOperationException("AnimalConfig is not assigned.");
+
+            if (herdConfig == null)
+                throw new InvalidOperationException("HerdConfig is not assigned.");
+
+            if (spawnerConfig == null)
+                throw new InvalidOperationException("SpawnerConfig is not assigned.");
+
+            if (heroConfig.MoveSpeed <= 0f)
+                throw new InvalidOperationException("HeroConfig: MoveSpeed must be > 0.");
+
+            if (animalConfig.MoveSpeed <= 0f)
+                throw new InvalidOperationException("AnimalConfig: MoveSpeed must be > 0.");
+
+            if (animalConfig.PatrolPointReachDistance > animalConfig.PatrolRadius)
+            {
+                throw new InvalidOperationException(
+                    "AnimalConfig: PatrolPointReachDistance must be <= PatrolRadius.");
+            }
+
+            if (herdConfig.MaxAnimals <= 0)
+                throw new InvalidOperationException("HerdConfig: MaxAnimals must be > 0.");
+
+            if (spawnerConfig.SpawnIntervalMin > spawnerConfig.SpawnIntervalMax)
+            {
+                throw new InvalidOperationException(
+                    "SpawnerConfig: SpawnIntervalMin must be <= SpawnIntervalMax.");
+            }
+
+            if (spawnerConfig.InitialSpawnCount > spawnerConfig.MaxAliveAnimals)
+            {
+                throw new InvalidOperationException(
+                    "SpawnerConfig: InitialSpawnCount must be <= MaxAliveAnimals.");
+            }
         }
     }
 }

@@ -88,9 +88,8 @@ namespace UnityPresentation.Bootstrap
 
         private void ValidateReferences()
         {
-            SceneReferenceValidator.Validate(sceneReferences);
-
-            ConfigValidator.Validate(
+            SceneReferenceValidator.ThrowIfInvalid(sceneReferences);
+            ConfigValidator.ThrowIfInvalid(
                 heroConfig,
                 animalConfig,
                 herdConfig,
