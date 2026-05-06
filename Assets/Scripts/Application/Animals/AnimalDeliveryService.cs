@@ -1,27 +1,25 @@
-using System;
+using Application.Animals.Events;
+using Application.Common;
 using Domain.Animals;
 using Domain.Herd;
-using Domain.Score;
 using Application.World;
 
 namespace Application.Animals
 {
     public sealed class AnimalDeliveryService
     {
+        private readonly IEventBus _eventBus;
         private readonly IHerdService _herdService;
-        private readonly IScoreService _scoreService;
         private readonly GameplayWorld _world;
-
-        public event Action<AnimalModel> Delivered;
 
         public AnimalDeliveryService(
             IHerdService herdService,
-            IScoreService scoreService,
-            GameplayWorld world)
+            GameplayWorld world,
+            IEventBus eventBus)
         {
             _herdService = herdService;
-            _scoreService = scoreService;
             _world = world;
+            _eventBus = eventBus;
         }
 
         public void TryDeliverAnimals()
@@ -35,9 +33,7 @@ namespace Application.Animals
 
                 _herdService.Remove(animal);
                 animal.SetStatus(AnimalStatus.Delivered);
-                _scoreService.Add(1);
-
-                Delivered?.Invoke(animal);
+                _eventBus.Publish(new AnimalDeliveredEvent(animal));
             }
         }
     }

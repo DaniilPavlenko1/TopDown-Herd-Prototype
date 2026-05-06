@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Application.Animals.Events;
+using Application.Common;
 using Domain.Animals;
 using Domain.Common;
 using Application.World;
@@ -8,6 +10,7 @@ namespace Application.Animals
 {
     public sealed class AnimalSpawnService
     {
+        private readonly IEventBus _eventBus;
         private readonly GameplayWorld _world;
         private readonly List<AnimalModel> _animals = new();
         private readonly Random _random = new();
@@ -16,11 +19,12 @@ namespace Application.Animals
 
         public IReadOnlyList<AnimalModel> Animals => _animals;
 
-        public event Action<AnimalModel> Spawned;
-
-        public AnimalSpawnService(GameplayWorld world)
+        public AnimalSpawnService(
+            GameplayWorld world,
+            IEventBus eventBus)
         {
             _world = world;
+            _eventBus = eventBus;
         }
 
         public AnimalModel Spawn()
@@ -30,7 +34,7 @@ namespace Application.Animals
                 GetRandomSpawnPosition());
 
             _animals.Add(animal);
-            Spawned?.Invoke(animal);
+            _eventBus.Publish(new AnimalSpawnedEvent(animal));
 
             return animal;
         }

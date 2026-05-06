@@ -11,9 +11,8 @@ namespace UnityPresentation.Bootstrap
     {
         public HeroModel Hero { get; }
         public IScoreService ScoreService { get; }
+        public IEventBus EventBus { get; }
         public GameplayUpdateService UpdateService { get; }
-        public AnimalSpawnService SpawnService { get; }
-        public AnimalDeliveryService DeliveryService { get; }
         public AnimalSpawnTimerService SpawnTimerService { get; }
         public HeroInputService HeroInputService { get; }
         public IDisposableService RuntimeBindings { get; }
@@ -21,18 +20,16 @@ namespace UnityPresentation.Bootstrap
         public GameplayContext(
             HeroModel hero,
             IScoreService scoreService,
+            IEventBus eventBus,
             GameplayUpdateService updateService,
-            AnimalSpawnService spawnService,
-            AnimalDeliveryService deliveryService,
             AnimalSpawnTimerService spawnTimerService,
             HeroInputService heroInputService,
             IDisposableService runtimeBindings)
         {
             Hero = hero;
             ScoreService = scoreService;
+            EventBus = eventBus;
             UpdateService = updateService;
-            SpawnService = spawnService;
-            DeliveryService = deliveryService;
             SpawnTimerService = spawnTimerService;
             HeroInputService = heroInputService;
             RuntimeBindings = runtimeBindings;

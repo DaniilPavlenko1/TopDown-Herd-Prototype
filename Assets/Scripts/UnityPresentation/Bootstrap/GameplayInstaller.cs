@@ -26,6 +26,7 @@ namespace UnityPresentation.Bootstrap
             Camera mainCamera)
         {
             var hero = new HeroModel(GameVector2.Zero);
+            IEventBus eventBus = new EventBus();
 
             var animalSettings = ConfigMapper.ToAnimalSettings(animalConfig);
             var herdSettings = ConfigMapper.ToHerdSettings(herdConfig);
@@ -43,7 +44,9 @@ namespace UnityPresentation.Bootstrap
             IPlayerInput playerInput = new MouseInputAdapter(mainCamera);
             var heroInputService = new HeroInputService(hero, playerInput);
 
-            var animalSpawnService = new AnimalSpawnService(worldContext.GameplayWorld);
+            var animalSpawnService = new AnimalSpawnService(
+                worldContext.GameplayWorld,
+                eventBus);
             IRandomService randomService = new SystemRandomService();
 
             var stateFactory = new AnimalStateFactory(
@@ -62,8 +65,8 @@ namespace UnityPresentation.Bootstrap
 
             var animalDeliveryService = new AnimalDeliveryService(
                 herdService,
-                scoreService,
-                worldContext.GameplayWorld);
+                worldContext.GameplayWorld,
+                eventBus);
 
             var gameplayUpdateService = new GameplayUpdateService(
                 playerInput,
@@ -81,45 +84,18 @@ namespace UnityPresentation.Bootstrap
                 spawnerConfig.SpawnIntervalMin,
                 spawnerConfig.SpawnIntervalMax);
 
-            IDisposableService runtimeBindings = new GameplayRuntimeBindings(
-                animalSpawnService,
-                animalDeliveryService);
+            IDisposableService runtimeBindings = new CompositeDisposableService(
+                new AnimalDeliveredScoreHandler(eventBus, scoreService),
+                new AnimalDeliveredDespawnHandler(eventBus, animalSpawnService));
 
             return new GameplayContext(
                 hero,
                 scoreService,
+                eventBus,
                 gameplayUpdateService,
-                animalSpawnService,
-                animalDeliveryService,
                 spawnTimerService,
                 heroInputService,
                 runtimeBindings);
-        }
-
-        private sealed class GameplayRuntimeBindings : IDisposableService
-        {
-            private readonly AnimalSpawnService _animalSpawnService;
-            private readonly AnimalDeliveryService _animalDeliveryService;
-
-            public GameplayRuntimeBindings(
-                AnimalSpawnService animalSpawnService,
-                AnimalDeliveryService animalDeliveryService)
-            {
-                _animalSpawnService = animalSpawnService;
-                _animalDeliveryService = animalDeliveryService;
-
-                _animalDeliveryService.Delivered += OnAnimalDelivered;
-            }
-
-            public void Dispose()
-            {
-                _animalDeliveryService.Delivered -= OnAnimalDelivered;
-            }
-
-            private void OnAnimalDelivered(AnimalModel animal)
-            {
-                _animalSpawnService.Despawn(animal);
-            }
         }
     }
 }

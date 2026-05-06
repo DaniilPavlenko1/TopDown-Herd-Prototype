@@ -1,5 +1,6 @@
 using Application.Common;
-using Domain.Animals;
+using Application.Animals.Events;
+using System;
 using UnityPresentation.Bindings;
 using UnityPresentation.Pooling;
 
@@ -39,8 +40,9 @@ namespace UnityPresentation.Bootstrap
         private sealed class PresentationRuntimeBindings : IDisposableService
         {
             private readonly SceneReferences _sceneReferences;
-            private readonly GameplayContext _gameplay;
             private readonly AnimalViewRegistry _animalViewRegistry;
+            private readonly IDisposable _spawnedSubscription;
+            private readonly IDisposable _deliveredSubscription;
 
             public PresentationRuntimeBindings(
                 SceneReferences sceneReferences,
@@ -48,29 +50,28 @@ namespace UnityPresentation.Bootstrap
                 AnimalViewRegistry animalViewRegistry)
             {
                 _sceneReferences = sceneReferences;
-                _gameplay = gameplay;
                 _animalViewRegistry = animalViewRegistry;
 
-                _sceneReferences.ScoreView.Bind(_gameplay.ScoreService);
-                _gameplay.SpawnService.Spawned += OnAnimalSpawned;
-                _gameplay.DeliveryService.Delivered += OnAnimalDelivered;
+                _sceneReferences.ScoreView.Bind(gameplay.ScoreService);
+                _spawnedSubscription = gameplay.EventBus.Subscribe<AnimalSpawnedEvent>(OnAnimalSpawned);
+                _deliveredSubscription = gameplay.EventBus.Subscribe<AnimalDeliveredEvent>(OnAnimalDelivered);
             }
 
             public void Dispose()
             {
-                _gameplay.SpawnService.Spawned -= OnAnimalSpawned;
-                _gameplay.DeliveryService.Delivered -= OnAnimalDelivered;
+                _deliveredSubscription.Dispose();
+                _spawnedSubscription.Dispose();
                 _sceneReferences.ScoreView.Unbind();
             }
 
-            private void OnAnimalSpawned(AnimalModel animal)
+            private void OnAnimalSpawned(AnimalSpawnedEvent eventData)
             {
-                _animalViewRegistry.Add(animal);
+                _animalViewRegistry.Add(eventData.Animal);
             }
 
-            private void OnAnimalDelivered(AnimalModel animal)
+            private void OnAnimalDelivered(AnimalDeliveredEvent eventData)
             {
-                _animalViewRegistry.Remove(animal);
+                _animalViewRegistry.Remove(eventData.Animal);
             }
         }
     }
