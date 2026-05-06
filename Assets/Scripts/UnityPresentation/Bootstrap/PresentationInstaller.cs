@@ -7,9 +7,9 @@ namespace UnityPresentation.Bootstrap
 {
     public sealed class PresentationInstaller
     {
-        public PresentationInstallerResult Install(
+        public PresentationContext Install(
             SceneReferences sceneReferences,
-            GameplayInstallerResult gameplay)
+            GameplayContext gameplay)
         {
             var animalViewPool = new AnimalViewPool(
                 sceneReferences.AnimalPrefab,
@@ -29,7 +29,9 @@ namespace UnityPresentation.Bootstrap
                 gameplay,
                 animalViewRegistry);
 
-            return new PresentationInstallerResult(
+            return new PresentationContext(
+                heroViewBinder,
+                animalViewRegistry,
                 viewTickService,
                 runtimeBindings);
         }
@@ -37,12 +39,12 @@ namespace UnityPresentation.Bootstrap
         private sealed class PresentationRuntimeBindings : IDisposableService
         {
             private readonly SceneReferences _sceneReferences;
-            private readonly GameplayInstallerResult _gameplay;
+            private readonly GameplayContext _gameplay;
             private readonly AnimalViewRegistry _animalViewRegistry;
 
             public PresentationRuntimeBindings(
                 SceneReferences sceneReferences,
-                GameplayInstallerResult gameplay,
+                GameplayContext gameplay,
                 AnimalViewRegistry animalViewRegistry)
             {
                 _sceneReferences = sceneReferences;
@@ -50,14 +52,14 @@ namespace UnityPresentation.Bootstrap
                 _animalViewRegistry = animalViewRegistry;
 
                 _sceneReferences.ScoreView.Bind(_gameplay.ScoreService);
-                _gameplay.AnimalSpawnService.Spawned += OnAnimalSpawned;
-                _gameplay.AnimalDeliveryService.Delivered += OnAnimalDelivered;
+                _gameplay.SpawnService.Spawned += OnAnimalSpawned;
+                _gameplay.DeliveryService.Delivered += OnAnimalDelivered;
             }
 
             public void Dispose()
             {
-                _gameplay.AnimalSpawnService.Spawned -= OnAnimalSpawned;
-                _gameplay.AnimalDeliveryService.Delivered -= OnAnimalDelivered;
+                _gameplay.SpawnService.Spawned -= OnAnimalSpawned;
+                _gameplay.DeliveryService.Delivered -= OnAnimalDelivered;
                 _sceneReferences.ScoreView.Unbind();
             }
 
@@ -70,20 +72,6 @@ namespace UnityPresentation.Bootstrap
             {
                 _animalViewRegistry.Remove(animal);
             }
-        }
-    }
-
-    public sealed class PresentationInstallerResult
-    {
-        public ViewTickService ViewTickService { get; }
-        public IDisposableService RuntimeBindings { get; }
-
-        public PresentationInstallerResult(
-            ViewTickService viewTickService,
-            IDisposableService runtimeBindings)
-        {
-            ViewTickService = viewTickService;
-            RuntimeBindings = runtimeBindings;
         }
     }
 }

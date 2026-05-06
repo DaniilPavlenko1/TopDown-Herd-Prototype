@@ -5,7 +5,7 @@ namespace UnityPresentation.Bootstrap
 {
     public sealed class WorldInstaller
     {
-        public WorldInstallerResult Install(
+        public WorldContext Install(
             SceneReferences sceneReferences,
             float visibleHeight,
             float yardWidthPercent,
@@ -40,17 +40,7 @@ namespace UnityPresentation.Bootstrap
 
             layoutApplier.Apply(layout);
 
-            return new WorldInstallerResult(gameplayWorld);
-        }
-    }
-
-    public sealed class WorldInstallerResult
-    {
-        public GameplayWorld GameplayWorld { get; }
-
-        public WorldInstallerResult(GameplayWorld gameplayWorld)
-        {
-            GameplayWorld = gameplayWorld;
+            return new WorldContext(gameplayWorld, layout);
         }
     }
 }

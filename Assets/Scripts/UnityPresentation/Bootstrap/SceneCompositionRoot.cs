@@ -32,7 +32,7 @@ namespace UnityPresentation.Bootstrap
 
             _lifetime = new GameplayLifetime();
 
-            WorldInstallerResult world = new WorldInstaller().Install(
+            WorldContext worldContext = new WorldInstaller().Install(
                 sceneReferences,
                 visibleHeight,
                 yardWidthPercent,
@@ -41,20 +41,20 @@ namespace UnityPresentation.Bootstrap
                 verticalPadding,
                 gapBetweenSpawnAndYard);
 
-            GameplayInstallerResult gameplay = new GameplayInstaller().Install(
-                world.GameplayWorld,
+            GameplayContext gameplayContext = new GameplayInstaller().Install(
+                worldContext,
                 heroConfig,
                 animalConfig,
                 herdConfig,
                 spawnerConfig,
                 sceneReferences.MainCamera);
 
-            PresentationInstallerResult presentation = new PresentationInstaller().Install(
+            PresentationContext presentationContext = new PresentationInstaller().Install(
                 sceneReferences,
-                gameplay);
+                gameplayContext);
 
-            RegisterGameplay(gameplay);
-            RegisterPresentation(presentation);
+            RegisterGameplay(gameplayContext);
+            RegisterPresentation(presentationContext);
 
             _lifetime.Initialize();
         }
@@ -69,17 +69,17 @@ namespace UnityPresentation.Bootstrap
             _lifetime?.Dispose();
         }
 
-        private void RegisterGameplay(GameplayInstallerResult gameplay)
+        private void RegisterGameplay(GameplayContext gameplay)
         {
             _lifetime.AddInitializable(gameplay.SpawnTimerService);
-            _lifetime.AddTickable(gameplay.GameplayUpdateService);
+            _lifetime.AddTickable(gameplay.UpdateService);
             _lifetime.AddTickable(gameplay.SpawnTimerService);
 
             _lifetime.AddDisposable(gameplay.HeroInputService);
             _lifetime.AddDisposable(gameplay.RuntimeBindings);
         }
 
-        private void RegisterPresentation(PresentationInstallerResult presentation)
+        private void RegisterPresentation(PresentationContext presentation)
         {
             _lifetime.AddTickable(presentation.ViewTickService);
             _lifetime.AddDisposable(presentation.ViewTickService);

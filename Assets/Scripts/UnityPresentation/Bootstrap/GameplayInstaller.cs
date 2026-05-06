@@ -17,8 +17,8 @@ namespace UnityPresentation.Bootstrap
 {
     public sealed class GameplayInstaller
     {
-        public GameplayInstallerResult Install(
-            GameplayWorld gameplayWorld,
+        public GameplayContext Install(
+            WorldContext worldContext,
             HeroConfig heroConfig,
             AnimalConfig animalConfig,
             HerdConfig herdConfig,
@@ -43,13 +43,13 @@ namespace UnityPresentation.Bootstrap
             IPlayerInput playerInput = new MouseInputAdapter(mainCamera);
             var heroInputService = new HeroInputService(hero, playerInput);
 
-            var animalSpawnService = new AnimalSpawnService(gameplayWorld);
+            var animalSpawnService = new AnimalSpawnService(worldContext.GameplayWorld);
             IRandomService randomService = new SystemRandomService();
 
             var stateFactory = new AnimalStateFactory(
                 animalMovementService,
                 ConfigMapper.ToAnimalMovementSettings(animalConfig),
-                gameplayWorld,
+                worldContext.GameplayWorld,
                 herdService,
                 () => hero.Position,
                 animalSettings,
@@ -63,7 +63,7 @@ namespace UnityPresentation.Bootstrap
             var animalDeliveryService = new AnimalDeliveryService(
                 herdService,
                 scoreService,
-                gameplayWorld);
+                worldContext.GameplayWorld);
 
             var gameplayUpdateService = new GameplayUpdateService(
                 playerInput,
@@ -85,14 +85,14 @@ namespace UnityPresentation.Bootstrap
                 animalSpawnService,
                 animalDeliveryService);
 
-            return new GameplayInstallerResult(
+            return new GameplayContext(
                 hero,
                 scoreService,
-                heroInputService,
                 gameplayUpdateService,
                 animalSpawnService,
                 animalDeliveryService,
                 spawnTimerService,
+                heroInputService,
                 runtimeBindings);
         }
 
@@ -120,38 +120,6 @@ namespace UnityPresentation.Bootstrap
             {
                 _animalSpawnService.Despawn(animal);
             }
-        }
-    }
-
-    public sealed class GameplayInstallerResult
-    {
-        public HeroModel Hero { get; }
-        public IScoreService ScoreService { get; }
-        public HeroInputService HeroInputService { get; }
-        public GameplayUpdateService GameplayUpdateService { get; }
-        public AnimalSpawnService AnimalSpawnService { get; }
-        public AnimalDeliveryService AnimalDeliveryService { get; }
-        public AnimalSpawnTimerService SpawnTimerService { get; }
-        public IDisposableService RuntimeBindings { get; }
-
-        public GameplayInstallerResult(
-            HeroModel hero,
-            IScoreService scoreService,
-            HeroInputService heroInputService,
-            GameplayUpdateService gameplayUpdateService,
-            AnimalSpawnService animalSpawnService,
-            AnimalDeliveryService animalDeliveryService,
-            AnimalSpawnTimerService spawnTimerService,
-            IDisposableService runtimeBindings)
-        {
-            Hero = hero;
-            ScoreService = scoreService;
-            HeroInputService = heroInputService;
-            GameplayUpdateService = gameplayUpdateService;
-            AnimalSpawnService = animalSpawnService;
-            AnimalDeliveryService = animalDeliveryService;
-            SpawnTimerService = spawnTimerService;
-            RuntimeBindings = runtimeBindings;
         }
     }
 }
