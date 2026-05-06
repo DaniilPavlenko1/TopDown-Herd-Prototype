@@ -8,52 +8,77 @@ namespace Domain.Animals.States
     {
         private readonly AnimalMovementService _movementService;
         private readonly MovementSettings _movementSettings;
-        private readonly GameBounds _bounds;
+        private readonly GameBounds _allowedBounds;
+        private readonly float _patrolRadius;
         private readonly float _reachDistance;
-
-        private GameVector2 _target;
-        private readonly Random _random = new();
+        private readonly Random _random;
 
         public PatrolAnimalState(
             AnimalMovementService movementService,
             MovementSettings movementSettings,
-            GameBounds bounds,
-            float reachDistance)
+            GameBounds allowedBounds,
+            float patrolRadius,
+            float reachDistance,
+            Random random)
         {
             _movementService = movementService;
             _movementSettings = movementSettings;
-            _bounds = bounds;
+            _allowedBounds = allowedBounds;
+            _patrolRadius = patrolRadius;
             _reachDistance = reachDistance;
+            _random = random;
         }
+
+        private GameVector2 _origin;
+        private GameVector2 _target;
 
         public void Enter(AnimalModel animal)
         {
-            SetNewTarget(animal);
+            _origin = _allowedBounds.Clamp(animal.Position);
+            animal.SetPosition(_origin);
             animal.SetStatus(AnimalStatus.Patrol);
+
+            PickNewTarget();
         }
 
         public void Tick(AnimalModel animal, float deltaTime)
         {
-            bool reached = _movementService.MoveAnimalTowards(
+            float distanceToTarget = GameVector2.Distance(
+                animal.Position,
+                _target);
+
+            if (distanceToTarget <= _reachDistance)
+            {
+                PickNewTarget();
+                return;
+            }
+
+            _movementService.MoveAnimalTowards(
                 animal,
                 _target,
                 _movementSettings,
                 deltaTime);
-
-            if (reached)
-                SetNewTarget(animal);
         }
 
         public void Exit(AnimalModel animal)
         {
         }
 
-        private void SetNewTarget(AnimalModel animal)
+        private void PickNewTarget()
         {
-            float x = (float)_random.NextDouble() * (_bounds.MaxX - _bounds.MinX) + _bounds.MinX;
-            float y = (float)_random.NextDouble() * (_bounds.MaxY - _bounds.MinY) + _bounds.MinY;
+            float angle = Random01() * MathF.PI * 2f;
+            float radius = MathF.Sqrt(Random01()) * _patrolRadius;
 
-            _target = new GameVector2(x, y);
+            var offset = new GameVector2(
+                MathF.Cos(angle) * radius,
+                MathF.Sin(angle) * radius);
+
+            _target = _allowedBounds.Clamp(_origin + offset);
+        }
+
+        private float Random01()
+        {
+            return (float)_random.NextDouble();
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Application.Animals
         private readonly IHerdService _herdService;
         private readonly Func<GameVector2> _heroPositionProvider;
         private readonly AnimalSettings _animalSettings;
+        private readonly Random _random = new();
 
         public AnimalStateFactory(
             AnimalMovementService animalMovementService,
@@ -39,7 +40,9 @@ namespace Application.Animals
                 _animalMovementService,
                 _movementSettings,
                 _world.SpawnBounds,
-                _animalSettings.PatrolPointReachDistance);
+                _animalSettings.PatrolRadius,
+                _animalSettings.PatrolPointReachDistance,
+                _random);
         }
 
         public IAnimalState CreateFollowState()
