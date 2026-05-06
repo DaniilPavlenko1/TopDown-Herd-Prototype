@@ -11,7 +11,7 @@ namespace UnityPresentation.Bootstrap
         {
             return new AnimalSettings(
                 config.MoveSpeed,
-                0.05f,
+                config.StopDistance,
                 config.FollowDistance,
                 config.CollectRadius,
                 config.PatrolRadius,
@@ -22,14 +22,14 @@ namespace UnityPresentation.Bootstrap
         {
             return new MovementSettings(
                 config.MoveSpeed,
-                0.05f);
+                config.StopDistance);
         }
 
         public static MovementSettings ToAnimalMovementSettings(AnimalConfig config)
         {
             return new MovementSettings(
                 config.MoveSpeed,
-                0.05f);
+                config.StopDistance);
         }
 
         public static HerdSettings ToHerdSettings(HerdConfig config)
