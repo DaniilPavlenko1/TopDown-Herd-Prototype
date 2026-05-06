@@ -12,8 +12,9 @@ namespace Domain.Movement
             out bool reached)
         {
             float distance = GameVector2.Distance(current, target);
+            float maxStep = settings.Speed * deltaTime;
 
-            if (distance <= settings.StopDistance)
+            if (distance <= settings.StopDistance || distance <= maxStep)
             {
                 reached = true;
                 return target;
@@ -24,7 +25,7 @@ namespace Domain.Movement
             return GameMath.MoveTowards(
                 current,
                 target,
-                settings.Speed * deltaTime);
+                maxStep);
         }
     }
 }
