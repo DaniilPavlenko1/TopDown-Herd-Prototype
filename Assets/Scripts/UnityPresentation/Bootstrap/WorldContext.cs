@@ -5,12 +5,10 @@ namespace UnityPresentation.Bootstrap
     public readonly struct WorldContext
     {
         public GameplayWorld GameplayWorld { get; }
-        public WorldLayout Layout { get; }
 
-        public WorldContext(GameplayWorld gameplayWorld, WorldLayout layout)
+        public WorldContext(GameplayWorld gameplayWorld)
         {
             GameplayWorld = gameplayWorld;
-            Layout = layout;
         }
     }
 }

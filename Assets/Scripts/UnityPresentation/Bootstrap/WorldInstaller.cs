@@ -40,7 +40,7 @@ namespace UnityPresentation.Bootstrap
 
             layoutApplier.Apply(layout);
 
-            return new WorldContext(gameplayWorld, layout);
+            return new WorldContext(gameplayWorld);
         }
     }
 }
