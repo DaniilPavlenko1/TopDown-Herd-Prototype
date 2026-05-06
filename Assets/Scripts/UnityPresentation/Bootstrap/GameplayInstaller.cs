@@ -44,10 +44,12 @@ namespace UnityPresentation.Bootstrap
             IPlayerInput playerInput = new MouseInputAdapter(mainCamera);
             var heroInputService = new HeroInputService(hero, playerInput);
 
+            IRandomService spawnRandomService = new SystemRandomService();
             var animalSpawnService = new AnimalSpawnService(
                 worldContext.GameplayWorld,
-                eventBus);
-            IRandomService randomService = new SystemRandomService();
+                eventBus,
+                spawnRandomService);
+            IRandomService patrolRandomService = new SystemRandomService();
 
             var stateFactory = new AnimalStateFactory(
                 animalMovementService,
@@ -56,7 +58,7 @@ namespace UnityPresentation.Bootstrap
                 herdService,
                 () => hero.Position,
                 animalSettings,
-                randomService);
+                patrolRandomService);
 
             var collectionService = new AnimalCollectionService(
                 herdService,

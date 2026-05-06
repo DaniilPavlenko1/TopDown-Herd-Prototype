@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Application.Animals.Events;
 using Application.Common;
@@ -11,9 +10,9 @@ namespace Application.Animals
     public sealed class AnimalSpawnService
     {
         private readonly IEventBus _eventBus;
+        private readonly IRandomService _randomService;
         private readonly GameplayWorld _world;
         private readonly List<AnimalModel> _animals = new();
-        private readonly Random _random = new();
 
         private int _nextId;
 
@@ -21,10 +20,12 @@ namespace Application.Animals
 
         public AnimalSpawnService(
             GameplayWorld world,
-            IEventBus eventBus)
+            IEventBus eventBus,
+            IRandomService randomService)
         {
             _world = world;
             _eventBus = eventBus;
+            _randomService = randomService;
         }
 
         public AnimalModel Spawn()
@@ -49,13 +50,13 @@ namespace Application.Animals
 
         private GameVector2 GetRandomSpawnPosition()
         {
-            float x = (float)_random.NextDouble() *
-                (_world.SpawnBounds.MaxX - _world.SpawnBounds.MinX) +
-                _world.SpawnBounds.MinX;
+            float x = _randomService.Range(
+                _world.SpawnBounds.MinX,
+                _world.SpawnBounds.MaxX);
 
-            float y = (float)_random.NextDouble() *
-                (_world.SpawnBounds.MaxY - _world.SpawnBounds.MinY) +
-                _world.SpawnBounds.MinY;
+            float y = _randomService.Range(
+                _world.SpawnBounds.MinY,
+                _world.SpawnBounds.MaxY);
 
             return new GameVector2(x, y);
         }
