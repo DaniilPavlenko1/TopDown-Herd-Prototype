@@ -1,4 +1,3 @@
-using System;
 using Domain.Common;
 using Domain.Movement;
 
@@ -11,7 +10,7 @@ namespace Domain.Animals.States
         private readonly GameBounds _allowedBounds;
         private readonly float _patrolRadius;
         private readonly float _reachDistance;
-        private readonly Random _random;
+        private readonly IRandomService _randomService;
 
         public PatrolAnimalState(
             AnimalMovementService movementService,
@@ -19,14 +18,14 @@ namespace Domain.Animals.States
             GameBounds allowedBounds,
             float patrolRadius,
             float reachDistance,
-            Random random)
+            IRandomService randomService)
         {
             _movementService = movementService;
             _movementSettings = movementSettings;
             _allowedBounds = allowedBounds;
             _patrolRadius = patrolRadius;
             _reachDistance = reachDistance;
-            _random = random;
+            _randomService = randomService;
         }
 
         private GameVector2 _origin;
@@ -66,19 +65,14 @@ namespace Domain.Animals.States
 
         private void PickNewTarget()
         {
-            float angle = Random01() * MathF.PI * 2f;
-            float radius = MathF.Sqrt(Random01()) * _patrolRadius;
+            float angle = _randomService.Range01() * System.MathF.PI * 2f;
+            float radius = System.MathF.Sqrt(_randomService.Range01()) * _patrolRadius;
 
             var offset = new GameVector2(
-                MathF.Cos(angle) * radius,
-                MathF.Sin(angle) * radius);
+                System.MathF.Cos(angle) * radius,
+                System.MathF.Sin(angle) * radius);
 
             _target = _allowedBounds.Clamp(_origin + offset);
-        }
-
-        private float Random01()
-        {
-            return (float)_random.NextDouble();
         }
     }
 }

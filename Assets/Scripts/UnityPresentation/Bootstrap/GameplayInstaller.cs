@@ -44,6 +44,7 @@ namespace UnityPresentation.Bootstrap
             var heroInputService = new HeroInputService(hero, playerInput);
 
             var animalSpawnService = new AnimalSpawnService(gameplayWorld);
+            IRandomService randomService = new SystemRandomService();
 
             var stateFactory = new AnimalStateFactory(
                 animalMovementService,
@@ -51,7 +52,8 @@ namespace UnityPresentation.Bootstrap
                 gameplayWorld,
                 herdService,
                 () => hero.Position,
-                animalSettings);
+                animalSettings,
+                randomService);
 
             var collectionService = new AnimalCollectionService(
                 herdService,
