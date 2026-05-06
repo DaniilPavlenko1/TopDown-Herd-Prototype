@@ -1,20 +1,7 @@
-using Application.Animals;
 using Application.Gameplay;
-using Application.Input;
-using Application.World;
 using Configs;
-using Domain.Animals;
-using Domain.Common;
-using Domain.Herd;
-using Domain.Hero;
-using Domain.Movement;
-using Domain.Score;
 using UnityEngine;
-using UnityPresentation.Bindings;
 using UnityPresentation.Diagnostics;
-using UnityPresentation.Input;
-using UnityPresentation.Pooling;
-using UnityPresentation.World;
 
 namespace UnityPresentation.Bootstrap
 {
@@ -38,16 +25,6 @@ namespace UnityPresentation.Bootstrap
         [SerializeField] private float gapBetweenSpawnAndYard = 1f;
 
         private GameplayLifetime _lifetime;
-        private GameplayUpdateService _gameplayUpdateService;
-        private HeroInputService _heroInputService;
-
-        private HeroViewBinder _heroViewBinder;
-        private AnimalViewRegistry _animalViewRegistry;
-
-        private AnimalSpawnService _animalSpawnService;
-        private AnimalDeliveryService _animalDeliveryService;
-
-        private GameplayWorld _gameplayWorld;
 
         private void Awake()
         {
@@ -55,8 +32,29 @@ namespace UnityPresentation.Bootstrap
 
             _lifetime = new GameplayLifetime();
 
-            BuildWorld();
-            BuildGameplay();
+            WorldInstallerResult world = new WorldInstaller().Install(
+                sceneReferences,
+                visibleHeight,
+                yardWidthPercent,
+                yardHeightPercent,
+                horizontalPadding,
+                verticalPadding,
+                gapBetweenSpawnAndYard);
+
+            GameplayInstallerResult gameplay = new GameplayInstaller().Install(
+                world.GameplayWorld,
+                heroConfig,
+                animalConfig,
+                herdConfig,
+                spawnerConfig,
+                sceneReferences.MainCamera);
+
+            PresentationInstallerResult presentation = new PresentationInstaller().Install(
+                sceneReferences,
+                gameplay);
+
+            RegisterGameplay(gameplay);
+            RegisterPresentation(presentation);
 
             _lifetime.Initialize();
         }
@@ -69,134 +67,23 @@ namespace UnityPresentation.Bootstrap
         private void OnDestroy()
         {
             _lifetime?.Dispose();
-
-            if (_animalSpawnService != null)
-                _animalSpawnService.Spawned -= OnAnimalSpawned;
-
-            if (_animalDeliveryService != null)
-                _animalDeliveryService.Delivered -= OnAnimalDelivered;
-
-            sceneReferences.ScoreView.Unbind();
-            _animalViewRegistry?.Clear();
         }
 
-        private void BuildWorld()
+        private void RegisterGameplay(GameplayInstallerResult gameplay)
         {
-            var layoutSettings = new WorldLayoutSettings(
-                visibleHeight,
-                sceneReferences.CameraView.AspectRatio,
-                yardWidthPercent,
-                yardHeightPercent,
-                horizontalPadding,
-                verticalPadding,
-                gapBetweenSpawnAndYard);
+            _lifetime.AddInitializable(gameplay.SpawnTimerService);
+            _lifetime.AddTickable(gameplay.GameplayUpdateService);
+            _lifetime.AddTickable(gameplay.SpawnTimerService);
 
-            var layoutService = new WorldLayoutService();
-            WorldLayout layout = layoutService.Calculate(layoutSettings);
-            sceneReferences.GameplayGizmos?.SetLayout(layout);
-
-            _gameplayWorld = new GameplayWorld(
-                layout.WorldBounds,
-                layout.SpawnBounds,
-                layout.YardBounds);
-
-            var layoutApplier = new WorldLayoutApplier(
-                sceneReferences.CameraView,
-                sceneReferences.GroundView,
-                sceneReferences.YardView,
-                sceneReferences.SpawnAreaView);
-
-            layoutApplier.Apply(layout);
+            _lifetime.AddDisposable(gameplay.HeroInputService);
+            _lifetime.AddDisposable(gameplay.RuntimeBindings);
         }
 
-        private void BuildGameplay()
+        private void RegisterPresentation(PresentationInstallerResult presentation)
         {
-            var hero = new HeroModel(GameVector2.Zero);
-
-            var animalSettings = ConfigMapper.ToAnimalSettings(animalConfig);
-            var herdSettings = ConfigMapper.ToHerdSettings(herdConfig);
-
-            var movementService = new MovementService();
-            var heroMovementService = new HeroMovementService(
-                movementService,
-                ConfigMapper.ToHeroMovementSettings(heroConfig));
-
-            var animalMovementService = new AnimalMovementService(movementService);
-
-            IHerdService herdService = new HerdService(herdSettings);
-            IScoreService scoreService = new ScoreService();
-
-            IPlayerInput playerInput = new MouseInputAdapter(sceneReferences.MainCamera);
-            _heroInputService = new HeroInputService(hero, playerInput);
-
-            _animalSpawnService = new AnimalSpawnService(_gameplayWorld);
-
-            var stateFactory = new AnimalStateFactory(
-                animalMovementService,
-                ConfigMapper.ToAnimalMovementSettings(animalConfig),
-                _gameplayWorld,
-                herdService,
-                () => hero.Position,
-                animalSettings);
-
-            var collectionService = new AnimalCollectionService(
-                herdService,
-                animalSettings,
-                stateFactory);
-
-            _animalDeliveryService = new AnimalDeliveryService(
-                herdService,
-                scoreService,
-                _gameplayWorld);
-
-            _gameplayUpdateService = new GameplayUpdateService(
-                playerInput,
-                hero,
-                heroMovementService,
-                _animalSpawnService,
-                collectionService,
-                _animalDeliveryService);
-
-            var animalViewPool = new AnimalViewPool(
-                sceneReferences.AnimalPrefab,
-                sceneReferences.AnimalsContainer);
-
-            _animalViewRegistry = new AnimalViewRegistry(animalViewPool);
-            _heroViewBinder = new HeroViewBinder(hero, sceneReferences.HeroView);
-            var spawnTimerService = new AnimalSpawnTimerService(
-                _animalSpawnService,
-                stateFactory,
-                spawnerConfig.InitialSpawnCount,
-                spawnerConfig.MaxAliveAnimals,
-                spawnerConfig.SpawnIntervalMin,
-                spawnerConfig.SpawnIntervalMax);
-            var viewTickService = new ViewTickService(
-                _heroViewBinder,
-                _animalViewRegistry);
-
-            sceneReferences.ScoreView.Bind(scoreService);
-
-            _animalSpawnService.Spawned += OnAnimalSpawned;
-            _animalDeliveryService.Delivered += OnAnimalDelivered;
-
-            _lifetime.AddInitializable(spawnTimerService);
-            _lifetime.AddTickable(_gameplayUpdateService);
-            _lifetime.AddTickable(spawnTimerService);
-            _lifetime.AddTickable(viewTickService);
-
-            _lifetime.AddDisposable(_heroInputService);
-            _lifetime.AddDisposable(viewTickService);
-        }
-
-        private void OnAnimalSpawned(AnimalModel animal)
-        {
-            _animalViewRegistry.Add(animal);
-        }
-
-        private void OnAnimalDelivered(AnimalModel animal)
-        {
-            _animalViewRegistry.Remove(animal);
-            _animalSpawnService.Despawn(animal);
+            _lifetime.AddTickable(presentation.ViewTickService);
+            _lifetime.AddDisposable(presentation.ViewTickService);
+            _lifetime.AddDisposable(presentation.RuntimeBindings);
         }
 
         private void ValidateReferences()
