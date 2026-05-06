@@ -35,7 +35,9 @@ namespace Application.Animals
 
         public void Initialize()
         {
-            for (int i = 0; i < _initialSpawnCount; i++)
+            int spawnCount = Math.Min(_initialSpawnCount, _maxAliveAnimals);
+
+            for (int i = 0; i < spawnCount; i++)
                 SpawnAnimal();
 
             ResetTimer();
