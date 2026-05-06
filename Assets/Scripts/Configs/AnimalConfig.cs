@@ -11,6 +11,9 @@ namespace Configs
         public float MoveSpeed { get; private set; } = 3f;
 
         [field: SerializeField, Min(0f)]
+        public float StopDistance { get; private set; } = 0.05f;
+
+        [field: SerializeField, Min(0f)]
         public float FollowDistance { get; private set; } = 0.7f;
 
         [field: SerializeField, Min(0f)]

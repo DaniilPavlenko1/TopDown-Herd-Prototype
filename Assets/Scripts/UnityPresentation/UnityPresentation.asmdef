@@ -1,0 +1,18 @@
+{
+  "name": "UnityPresentation",
+  "references": [
+    "Domain",
+    "Application",
+    "Configs",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
