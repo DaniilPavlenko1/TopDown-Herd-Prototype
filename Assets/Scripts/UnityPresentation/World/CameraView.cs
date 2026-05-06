@@ -9,21 +9,38 @@ namespace UnityPresentation.World
     {
         private Camera _camera;
 
-        public float AspectRatio => _camera.aspect;
+        public float AspectRatio => Camera.aspect;
+
+        private Camera Camera
+        {
+            get
+            {
+                EnsureCamera();
+                return _camera;
+            }
+        }
 
         private void Awake()
         {
-            _camera = GetComponent<Camera>();
-            _camera.orthographic = true;
+            EnsureCamera();
         }
 
         public void Apply(WorldLayout layout)
         {
-            _camera.orthographicSize = layout.WorldBounds.Size.Y * 0.5f;
+            Camera.orthographicSize = layout.WorldBounds.Size.Y * 0.5f;
 
             transform.position = UnityVectorMapper.ToVector3(
                 layout.WorldBounds.Center,
                 transform.position.z);
+        }
+
+        private void EnsureCamera()
+        {
+            if (_camera != null)
+                return;
+
+            _camera = GetComponent<Camera>();
+            _camera.orthographic = true;
         }
     }
 }
