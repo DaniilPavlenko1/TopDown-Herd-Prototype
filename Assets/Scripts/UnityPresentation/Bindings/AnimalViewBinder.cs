@@ -17,7 +17,6 @@ namespace UnityPresentation.Bindings
             _view = view;
 
             _view.Bind(_model);
-            _view.SetActive(true);
         }
 
         public void Tick()
@@ -28,7 +27,6 @@ namespace UnityPresentation.Bindings
         public void Dispose()
         {
             _view.Unbind();
-            _view.SetActive(false);
         }
     }
 }
