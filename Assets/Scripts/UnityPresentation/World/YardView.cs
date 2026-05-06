@@ -9,14 +9,15 @@ namespace UnityPresentation.World
     {
         private BoxCollider2D _collider;
 
-        public void Awake()
+        private void Awake()
         {
-            _collider = GetComponent<BoxCollider2D>();
-            _collider.isTrigger = true;
+            EnsureCollider();
         }
 
         public void Apply(WorldLayout layout)
         {
+            EnsureCollider();
+
             transform.position = UnityVectorMapper.ToVector3(layout.YardBounds.Center);
 
             transform.localScale = new Vector3(
@@ -24,8 +25,15 @@ namespace UnityPresentation.World
                 layout.YardBounds.Size.Y,
                 1f);
 
+            _collider.isTrigger = true;
             _collider.size = Vector2.one;
             _collider.offset = Vector2.zero;
+        }
+        
+        private void EnsureCollider()
+        {
+            if (_collider == null)
+                _collider = GetComponent<BoxCollider2D>();
         }
     }
 }
